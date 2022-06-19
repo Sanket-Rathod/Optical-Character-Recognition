@@ -1,7 +1,7 @@
 {
   "name": "prj1-sol",
   "version": "1.0.0",
-  "description": "",
+  "description": "Name:Sanket Jiten Rathod B-Number:B00923550 Email:srathod1@binghamton.edu",
   "main": "index.js",
   "scripts": {
     "test": "mocha test/",
@@ -17,6 +17,9 @@
     "mocha": "^10.0.0"
   },
   "dependencies": {
-    "cs544-js-utils": "file:../../../cs544/lib/cs544-js-utils"
+    "cs544-js-utils": "file:../../../projects/cs544/lib/cs544-js-utils"
+  },
+  "directories": {
+    "test": "test"
   }
 }
