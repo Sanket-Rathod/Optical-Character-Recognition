@@ -64,14 +64,14 @@ export default function parseImages(imageSpecs, imageBytes) {//headers, buffer
     {
       test =imageSpecs.images[i].value;
       
-      if(test!=cols) return err('cols incorrect', {code:'BAD_VAL', hasErrors:true});
+      if(test!==cols) return err('cols incorrect', {code:'BAD_VAL', hasErrors:true});
     }
   
   }
  // console.log("image_data.length "+ image_dv.length);
-  if((image_dv.length-16)/(rows*cols)!=n_data) return err('image length incorrect', {code:'BAD_FMT', hasErrors:true});
+  if((image_dv.length-16)/(rows*cols)!==n_data) return err('image length incorrect', {code:'BAD_FMT', hasErrors:true});
   //console.log("label_data.length "+ image_dv.length);
-  if((label_dv.length-8)!=n_data) return err('label length incorrect', {code:'BAD_FMT', hasErrors:true});
+  if((label_dv.length-8)!==n_data) return err('label length incorrect', {code:'BAD_FMT', hasErrors:true});
   // console.log("r"+rows);
   // console.log(cols);
 
