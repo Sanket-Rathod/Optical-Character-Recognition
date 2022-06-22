@@ -22,85 +22,90 @@ export default function parseImages(imageSpecs, imageBytes) {//headers, buffer
   const magic_image = image_data.getInt32(0,false);
   const magic_label = label_data.getInt32(0,false);
   
-  const n_data = image_data.getInt32(4,false);
   const rows = image_data.getInt32(8,false);
   const cols = image_data.getInt32(12,false);
   let images = [];
   let label = [];
   let object = [];
-  let test;
+  let test, nImages;
+  const n_data = image_data.getInt32(4,false);
+
 
   for(let i=0;i<imageSpecs.labels.length;i++){
     if(imageSpecs.labels[i].name==='magic')
     {
-      console.log("magicccc");
+      // console.log("magicccc");
       test =imageSpecs.labels[i].value;
-      console.log("test: ",test);
-      console.log("magic_label: ",magic_label);
-      if(test!=magic_label) return err('must detect inconstency between # of labels and # of images', {code:'BAD_VAL', hasErrors:true});
+      // console.log("test: ",test);
+      // console.log("magic_label: ",magic_label);
+      if(test!=magic_label) return err('magic number for label incoorect', {code:'BAD_VAL', hasErrors:true});
     }
 
-    console.log(i);
   }
 
   for(let i=0;i<imageSpecs.images.length;i++){
     if(imageSpecs.images[i].name==='magic')
     {
-      console.log("magicccc");
       test =imageSpecs.images[i].value;
-      console.log("test: ",test);
-      console.log("magic_image: ",magic_image);
-      if(test!=magic_image) return err('must detect inconstency between # of labels and # of images', {code:'BAD_VAL', hasErrors:true});
+      
+      if(test!=magic_image) return err('magic number for image incoorect', {code:'BAD_VAL', hasErrors:true});
+    }
+    if(imageSpecs.images[i].name==='nImages')
+    {
+      nImages =imageSpecs.images[i].value;
     }
     if(imageSpecs.images[i].name==='nRows')
     {
-      console.log("magicccc");
       test =imageSpecs.images[i].value;
-      console.log("test: ",test);
-      console.log("magic_image: ",rows);
-      if(test!=rows) return err('must detect inconstency between # of labels and # of images', {code:'BAD_VAL', hasErrors:true});
+      
+      if(test!=rows) return err('rows incorrect', {code:'BAD_VAL', hasErrors:true});
     }
     if(imageSpecs.images[i].name==='nCols')
     {
-      console.log("magicccc");
       test =imageSpecs.images[i].value;
-      console.log("test: ",test);
-      console.log("magic_image: ",cols);
-      if(test!=cols) return err('must detect inconstency between # of labels and # of images', {code:'BAD_VAL', hasErrors:true});
+      
+      if(test!=cols) return err('cols incorrect', {code:'BAD_VAL', hasErrors:true});
     }
   
   }
  // console.log("image_data.length "+ image_dv.length);
-  if(image_dv.length!=32) return err('must detect inconstency between # of labels and # of images', {code:'BAD_FMT', hasErrors:true});
+  if((image_dv.length-16)/(rows*cols)!=n_data) return err('image length incorrect', {code:'BAD_FMT', hasErrors:true});
   //console.log("label_data.length "+ image_dv.length);
-  if(label_dv.length!=12) return err('must detect inconstency between # of labels and # of images', {code:'BAD_FMT', hasErrors:true});
+  if((label_dv.length-8)!=n_data) return err('label length incorrect', {code:'BAD_FMT', hasErrors:true});
+  // console.log("r"+rows);
+  // console.log(cols);
 
-  console.log(test);
-  console.log('andar');``
   // console.log(n_data + " " + rows + " "+ cols);
-  
+  let image = [];
+
   for(let i=0;i<n_data;i++){
-    let image = [];
+    image = [];
     let single_label = imageBytes.labels[i+8]
     label.push(single_label);
+    let row = [];
     for(let r=0;r<rows;r++){
-      let row = [];
+      
+      
       let pixel;
       for(let c=0;c<cols;c++){
         // if(cols!==28)return err('inconsistent cols', {code : 'BAD_FMT', hasErrors : true})
-        pixel= imageBytes.images[(i * 28 * 28) + (c+ (r * 28)) + 16];
+        pixel= imageBytes.images[(i * rows * cols) + (c+ (r * rows)) + 16];
+        // console.log(pixel);
         if(pixel!=null)
           row.push(pixel);
       }
-      if(pixel!=null)
-        image.push(row);
+      
+        // image.push(row);
+      
     }
-    images.push(image);
-    object.push({features:image, label:single_label});
+    images.push(row);
+    // console.log(label);
+    object.push({features: row, label:single_label.toString()});
+   
   }
-  // console.log(images);
-  // console.log(label);
-  // console.log(image_data);
+  // object.push({features: images, label:label});
+  
+  
  // if(images.length !== label.length)return err('must detect inconstency between # of labels and # of images', {code:'BAD_FMT', hasErrors:true});
   return {val : object,hasErrors:false}
   // if(ok){//check if ok works

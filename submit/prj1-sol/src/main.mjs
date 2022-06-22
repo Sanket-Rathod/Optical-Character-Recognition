@@ -72,7 +72,7 @@ function doKnn(testLabeledImages, trainLabeledImages, options) {
   let out = msg => console.log(msg);
   for (let i = index0; i < index1; i++) {
     const { features, label } = testLabeledImages[i];;
-    console.log(i + " " + label);
+    // console.log(i + " " + label);
     const labelIndexResult = knn(features, trainLabeledImages, k);
     if (labelIndexResult.hasErrors) panic(labelIndexResult);
     const [label1, trainIndex] = labelIndexResult.val;
