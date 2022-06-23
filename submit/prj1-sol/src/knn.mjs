@@ -15,9 +15,9 @@ export default function  knn(testFeatures, trainLabeledFeatures, k=3) {
   let tempA = [];
   let index=0;
   let counts = [];
-  let maxcount, maxlabel;
+  let maxcount=-1, maxlabel=-1,maxIndex=-1;
   let countDetails = Array.from({length:10}).fill(0);
-  console.log(countDetails);
+  // console.log(countDetails);
   // console.log(trainLabeledFeatures.length);
   
     for(let trainDetails of trainLabeledFeatures){
@@ -39,20 +39,32 @@ export default function  knn(testFeatures, trainLabeledFeatures, k=3) {
       }
     }
     for(let indA of a){
-      console.log(parseInt(indA[1]));
+      // console.log(parseInt(indA[1]));
       countDetails[parseInt(indA[1])]+=1;
     }
-  console.log(countDetails);
+  // console.log(maxcount);
+  
   for(let i=0;i<countDetails.length;i++){
-    if(maxcount<countDetails[i]){
+    // console.log("anda");
+    if(countDetails[i]>maxcount){
+      // console.log("andar");
       maxlabel = i;
       maxcount = countDetails[i];
     }
   }
+  // console.log(maxcount +" "+maxlabel +" ");
   for(let temp of a){
+    if(parseInt(temp[1])===maxlabel){
+      maxIndex = temp[2];
+      
+    }
     
   }
-  console.log(a);
+  let maxlabelstr = parseInt(maxlabel).toString();
+
+  console.log( maxlabel.toString(), maxIndex);
+  //  return {val:[maxlabel.toString(),maxIndex]};
+  // 
   // for(let i=0;i<index;i++){
     
   //   a.push(tempA.sort((x,y)=>x[0]-y[0]).slice(0,k));
@@ -61,5 +73,5 @@ export default function  knn(testFeatures, trainLabeledFeatures, k=3) {
   // a.sort((x,y)=> x[0]-y[0]).slice(0,k);
 
   // console.log(a);
-  return err('knn() not implemented', { code: 'NO_IMPL' });
+  //return err('knn() not implemented', { code: 'NO_IMPL' });
 }
