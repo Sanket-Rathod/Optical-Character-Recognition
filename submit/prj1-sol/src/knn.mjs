@@ -10,11 +10,12 @@ import { ok, err } from 'cs544-js-utils';
  *             different from length of subject testFeatures.
  */
 export default function  knn(testFeatures, trainLabeledFeatures, k=3) {
+  if(testFeatures.length!==trainLabeledFeatures[0].features.length)return err('length doesn\'t match', { code: 'BAD_FMT' })
   let sum=0;
   let a = [];
   let tempA = [];
   let index=0;
-  let counts = [];
+  let countmap= new Map();
   let maxcount=-1, maxlabel=-1,maxIndex=-1;
   let countDetails = Array.from({length:10}).fill(0);
   // console.log(countDetails);
@@ -38,18 +39,37 @@ export default function  knn(testFeatures, trainLabeledFeatures, k=3) {
         index=0;
       }
     }
+    // for(let i=0;i<10;i++)countmap.set(i,0);
+    
     for(let indA of a){
       // console.log(parseInt(indA[1]));
       countDetails[parseInt(indA[1])]+=1;
+
+      //Map
+      if(countmap.has(parseInt(indA[1]))){
+        countmap.set(parseInt(indA[1]),countmap.get(parseInt(indA[1]))+1);
+      }
+      else {
+        countmap.set(parseInt(indA[1]),1);
+      }
+      
     }
   // console.log(maxcount);
   
-  for(let i=0;i<countDetails.length;i++){
+  /*for(let i=0;i<countDetails.length;i++){
+    
     // console.log("anda");
     if(countDetails[i]>maxcount){
       // console.log("andar");
       maxlabel = i;
       maxcount = countDetails[i];
+    }
+  }*/
+  for(let [key,value] of countmap){
+    // console.log(key+" "+value);
+    if(value>maxcount){
+      maxlabel = key;
+      maxcount = value;
     }
   }
   // console.log(maxcount +" "+maxlabel +" ");
@@ -60,10 +80,11 @@ export default function  knn(testFeatures, trainLabeledFeatures, k=3) {
     }
     
   }
+  
   let maxlabelstr = parseInt(maxlabel).toString();
-
-  console.log( maxlabel.toString(), maxIndex);
-  //  return {val:[maxlabel.toString(),maxIndex]};
+  // console.log( a);
+  // console.log( maxlabel.toString(), maxIndex);
+   return {val:[maxlabel.toString(),maxIndex]};
   // 
   // for(let i=0;i<index;i++){
     
