@@ -5,17 +5,21 @@ import makeFeaturesDao from './features-dao.mjs';
 import Path from 'path';
 
 export default async function main() {
+  console.log('inside main');
   const args = process.argv.slice(2);
   if (args.length < 2) {
     usage();
   }
   const dbUrl = args[0];
   const daoResult = await makeFeaturesDao(dbUrl);
+  console.log('saoresult :' +daoResult);
   if (daoResult.hasErrors) panic(daoResult);
   const dao = daoResult.val;
+  // console.log('dao'+dao);
   try {
     switch (args[1]) {
       case 'add': {
+        console.log('inside add');
 	if (args.length !== 4 && args.length !== 3) usage();
 	const dataResult = await readJson(args[2]);
 	if (dataResult.hasErrors) panic(dataResult);
@@ -31,6 +35,7 @@ export default async function main() {
 	break;
       }
       case 'all-train': {
+        console.log('inside all train');
 	if (args.length !== 2) usage();
 	const result = await dao.getAllTrainingFeatures();
 	if (result.hasErrors) panic(result);
