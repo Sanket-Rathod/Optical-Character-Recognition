@@ -29,7 +29,9 @@ describe('features DAO', () => {
     let ids = [];
     for (const { features, label } of LABELED_FEATURES_LIST) {
       const result = await dao.add(new Uint8Array(features), false, label);
+      // console.log(result.hasErrors);
       expect(result.hasErrors).to.equal(false);
+      
       ids.push(result.val);
     }
     expect(ids.length).to.equal(LABELED_FEATURES_LIST.length);
@@ -48,6 +50,7 @@ describe('features DAO', () => {
     let ids = [];
     for (const { features, label } of LABELED_FEATURES_LIST) {
       const result = await dao.add(new Uint8Array(features), false, label);
+      // console.log(result.hasErrors);
       expect(result.hasErrors).to.equal(false);
       ids.push(result.val);
     }
@@ -69,6 +72,7 @@ describe('features DAO', () => {
     for (const { features, label } of LABELED_FEATURES_LIST) {
       const b64Features = uint8ArrayToB64(new Uint8Array(features));
       const result = await dao.add(b64Features, true, label);
+      // console.log(result.hasErrors);
       expect(result.hasErrors).to.equal(false);
       ids.push(result.val);
     }
@@ -86,17 +90,33 @@ describe('features DAO', () => {
   });
 
   it('should retrieve added base-64 features as Uint8Array', async () => {
-    const todo = `
-      Add test like previous test to check features added as
-      base-64 can be correctly retrieved as Uint8Array's.
-    `;
-    expect('TODO').to.equal(todo);
+    let ids = [];
+    for (const { features, label } of LABELED_FEATURES_LIST) {
+      const b64Features = uint8ArrayToB64(new Uint8Array(features));
+      const result = await dao.add(b64Features, true, label);
+      // console.log(result);
+      expect(result.hasErrors).to.equal(false);
+      ids.push(result.val);
+    }
+    expect(ids.length).to.equal(LABELED_FEATURES_LIST.length);
+    for (const [i, id] of ids.entries()) {
+      const result = await dao.get(id, false);
+      expect(result.hasErrors).to.equal(false);
+      const { features, label } = result.val;
+      // expect(features).to.be.a('string');
+      const labeledFeatures = LABELED_FEATURES_LIST[i];
+      expect(Array.from((features)))
+	.to.deep.equal(labeledFeatures.features);
+      expect(label).to.equal(labeledFeatures.label);
+    }
   });
+
 
   it('should return NOT_FOUND errors for incorrect id\'s', async () => {
     let ids = [];
     for (const { features, label } of LABELED_FEATURES_LIST) {
       const result = await dao.add(new Uint8Array(features), false, label);
+      // console.log(result.hasErrors);
       expect(result.hasErrors).to.equal(false);
       ids.push(result.val);
     }
@@ -112,9 +132,11 @@ describe('features DAO', () => {
     let ids = [];
     for (const { features, label } of LABELED_FEATURES_LIST) {
       let result = await dao.add(new Uint8Array(features), false, label);
+      // console.log(result.hasErrors);
       expect(result.hasErrors).to.equal(false);
       ids.push(result.val);
       result = await dao.add(new Uint8Array(features), false);
+      // console.log(result.hasErrors);
       expect(result.hasErrors).to.equal(false);
       ids.push(result.val);
     }
@@ -122,7 +144,9 @@ describe('features DAO', () => {
     const trainResult = await dao.getAllTrainingFeatures();
     expect(trainResult.hasErrors).to.equal(false);
     const train = trainResult.val;
+    // console.log(train);
     expect(train.length).to.equal(LABELED_FEATURES_LIST.length);
+    // console.log(train);
     const xtrain =
       train.map(e => ({ features: Array.from(e.features), label: e.label}));
     expect(xtrain).to.have.deep.members(LABELED_FEATURES_LIST);
@@ -130,11 +154,16 @@ describe('features DAO', () => {
 
   
   it('should not retrieve features after clear', async () => {
-    const todo = `
-      Add test to add in features and verify that they
-      return NOT_FOUND errors after a clear.
-    `;
-    expect('TODO').to.equal(todo);
+    let ids = [];
+    for (const { features, label } of LABELED_FEATURES_LIST) {
+      const result = await dao.add(new Uint8Array(features), false, label);
+      expect(result.hasErrors).to.equal(false);
+      ids.push(result.val);
+    }
+    expect(ids.length).to.equal(LABELED_FEATURES_LIST.length);
+    await dao.clear();
+    const trainResult = await dao.getAllTrainingFeatures();
+    expect(trainResult.val.length).to.equal(0);
   });
   
 });

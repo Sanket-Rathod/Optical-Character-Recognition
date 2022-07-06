@@ -21,7 +21,7 @@ class AuthDao {
       const users = await db.collection('Features');
       params.users = users;
       params.counter = counter;
-      console.log(this.users);
+      // console.log(this.users);
       // await users.createIndex('loginId');
       // params.count = await users.countDocuments();
       return ok(new AuthDao(params));
@@ -47,7 +47,8 @@ class AuthDao {
       features = uint8ArrayToB64(features);
     }
     this.counter += 1;
-    const featureId = Math.floor(Math.random()*100) + "_" + this.counter;
+    const featureId = new Date().getTime().toString(16)+"" + Math.floor(Math.random()*100) + Math.floor(Math.random()*100);
+    // const featureId = Math.floor(Math.random()*100) + "_" + this.counter;
     const dbObj = { _id: featureId, features:features, label:label };
     try {
       const collection = this.users;
@@ -58,7 +59,7 @@ class AuthDao {
     catch (e) {
       return err(e.message, { code: 'DB' });
     }
-    return ok({dbObj},{hasErrors:false});
+    return ok(dbObj._id);
   }
 
 
@@ -70,14 +71,17 @@ class AuthDao {
       const collection = this.users;
       // console.log(this.users);
       const dbEntries = await collection.find().toArray();
-      console.log(dbEntries);
-      for(let i=0;i<dbEntries.length;i++){
-        console.log(dbEntries[i].features +":"+dbEntries[i].label);
-        featureDetails[i] = dbEntries[i].features;
+      // console.log(dbEntries);
+      for(let dbEntry of dbEntries){
+        // console.log(dbEntries[i].features +":"+dbEntries[i].label);
+        if(dbEntry.label!==null){
+          featureDetails.push({"features":b64ToUint8Array (dbEntry.features), "label" : dbEntry.label});
+        }
+          
       }
       if (featureDetails){
-        console.log('feature_details : '+featureDetails);
-	      return ok(featureDetails,{hasErrors:false});
+        // console.log('feature_details : '+featureDetails);
+	      return ok(featureDetails);
       }
       else {
 	      return err(`no user for id '${userId}'`, { code: 'NOT_FOUND' });
@@ -103,13 +107,13 @@ class AuthDao {
       const dbEntry = await collection.findOne({_id: userId});
       if (dbEntry) {
 	let user = { userId, ...dbEntry };
-  console.log(user);
-  // if(!isB64){
-  //   user.features = b64ToUint8Array(user.features);
-  // }
+  // console.log(user);
+  if(!isB64){
+    user.features = b64ToUint8Array(user.features);
+  }
   // console.log(user);
         delete user._id;
-        return ok(user,{hasErrors:false});
+        return ok(user);
       }
       else {
 	return err(`no user for id '${userId}'`, { code: 'NOT_FOUND' });
@@ -123,7 +127,7 @@ class AuthDao {
   async clear() {
     try {
       const collection = this.users;
-      const delResult = await collection.remove();
+      const delResult = await collection.deleteMany();
       if (!delResult) {
 	return err(`unexpected falsy DeleteResult`, {code: 'DB'});
       }
@@ -133,7 +137,7 @@ class AuthDao {
       }
       
       else {
-	return ok(delResult,{hasErrors:false});
+	return ok(delResult);
       }
     }
     catch (e) {
@@ -142,6 +146,4 @@ class AuthDao {
   }
 
 }
-
-
 
