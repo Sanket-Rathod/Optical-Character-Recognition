@@ -1,0 +1,5 @@
+Name:		Sanket Jiten Rathod
+B-Number:	B00923550
+Email:		srathod1@binghamton.edu
+
+Data folder is not added in git hence node may not find ubytes files. Also, tmp file is not added in git hence you might not find mnist-test-data of professor. Functionality is running as expected. Please let me know if more details are required. 
