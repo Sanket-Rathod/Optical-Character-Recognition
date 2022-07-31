@@ -44,6 +44,7 @@ class DigitImageRecognizer extends HTMLElement {
 
   static get observedAttributes() { return ['ws-url']; }
   attributeChangedCallback(name, _oldValue, newValue) {
+    // alert('sfjkasdbnf');
     this.init(newValue);
   }
 
@@ -87,11 +88,11 @@ class DigitImageRecognizer extends HTMLElement {
 
     })
 
-    const inputHandler = document.querySelector('#ws-url');
-    console.log('ih='+inputHandler);
-    inputHandler.addEventListener('change',(event)=>{
-      this.attributeChangedCallback(_name, _oldValue, event.target.value);
-    });
+    // const inputHandler = document.querySelector('#ws-url');
+    // console.log('ih='+inputHandler);
+    // inputHandler.addEventListener('change',(event)=>{
+    //   // this.attributeChangedCallback(_name, _oldValue, event.target.value);
+    // });
 
     
     // draw(ctx, {x: 0, y: 10}, {x: 10, y: 10})
