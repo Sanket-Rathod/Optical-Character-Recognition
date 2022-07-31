@@ -197,7 +197,10 @@ class DigitImageRecognizer extends HTMLElement {
     console.log("dsfhhjhdsaj",response);
     if(response.errors){ 
       console.log("resposne errror : ", response); 
+      this.shadowRoot.querySelector('#knn-label').innerHTML='';
       this.reportErrors(response);
+    }else {
+      this.shadowRoot.querySelector('#errors').innerHTML = '';
     }
     const {id,label} = await this.instance.getImage(response.val.id);
     console.log(label);
